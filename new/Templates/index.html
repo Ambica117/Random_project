@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Envelope with Animated Scissors and Cards</title>
+    <style>
+        /* Basic styling */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #000;
+        }
+
+        .envelope {
+            width: 300px;
+            height: 200px;
+            background-color: #d1a36e;
+            position: relative;
+            border-radius: 5px;
+            transform: rotate(-5deg);
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            overflow: hidden;
+        }
+
+        .tape {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 30px;
+            background-color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 10px;
+            cursor: pointer;
+        }
+
+        .hearts {
+            display: flex;
+            gap: 5px;
+        }
+
+        .heart {
+            font-size: 20px;
+        }
+
+        .scissors {
+            font-size: 20px;
+            transform: rotate(20deg);
+            position: absolute;
+            left: 10px;
+            transition: left 1s ease, opacity 0.5s ease;
+        }
+
+        .tape.cut {
+            display: none;
+        }
+
+        .cards {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            position: absolute;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+        }
+
+        .cards.open {
+            display: flex;
+        }
+
+        .card {
+            width: 250px;
+            height: 100px;
+            background-color: #fff;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: 'Cursive', sans-serif;
+            text-align: center;
+            font-size: 14px;
+            color: #333;
+            transition: transform 0.5s ease;
+            transform-style: preserve-3d; /* 3D effect */
+            align-items: center; /* Center align vertically */
+            justify-content: center;
+            position: relative;
+        }
+
+        .card.is-flipped {
+            transform: rotateY(180deg); /* Flipping effect */
+        }
+
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.5s;
+            transform-style: preserve-3d;
+        }
+
+        .card-front, .card-back {
+            font-size: 1.5rem;
+            font-weight: 200;
+            position: absolute;
+            backface-visibility: hidden;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card-back {
+            transform: rotateY(180deg);
+        }
+    </style>
+</head>
+<body>
+    <div class="envelope" id="envelope">
+        <div class="tape" id="tape">
+            <div class="hearts">
+                <span class="heart">T</span>
+                <span class="heart">T</span>
+                <span class="heart">T</span>
+                <span class="heart">T</span>
+                <span class="heart">T</span>
+                <span class="heart">T</span>
+                <span class="heart">T</span>
+                <span class="heart">T</span>
+            </div>
+            <div class="scissors" id="scissors">✂️</div>
+        </div>
+        
+        <!-- Hidden cards that will appear after envelope is opened -->
+        <div class="cards" id="cards">
+            <div class="card" id="card1">
+                <div class="card-inner">
+                    <div class="card-front">T</div>
+                    <div class="card-back">TEXT</div> <!-- Back side of the card -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let isTapeCut = false;
+        let openEnvelope = false;
+
+        function cutTape() {
+            const scissors = document.getElementById('scissors');
+            scissors.style.left = "calc(100% - 40px)";
+            setTimeout(() => {
+                document.getElementById('tape').classList.add('cut');
+                isTapeCut = true;
+                openEnvelopeAndShowCard(); // Open envelope and show card after cutting tape
+            }, 1000); // Wait for the scissors movement
+        }
+
+        function openEnvelopeAndShowCard() {
+            document.getElementById('envelope').classList.add('open');
+            document.getElementById('scissors').style.opacity = "0"; // Hide scissors
+            setTimeout(() => {
+                document.getElementById('cards').classList.add('open'); // Show the cards
+            }, 100); // Wait before showing the card
+        }
+
+        document.getElementById('envelope').addEventListener('click', function() {
+            if (!isTapeCut) {
+                cutTape(); // First click to cut the tape
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.card');
+
+            cards.forEach(card => {
+                card.addEventListener('click', function() {
+                    this.classList.toggle('is-flipped'); // Toggle the flipped class
+                });
+            });
+        });
+    </script>
+</body>
+</html>
